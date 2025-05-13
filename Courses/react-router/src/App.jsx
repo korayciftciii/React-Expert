@@ -1,22 +1,15 @@
-import { Children, useState } from 'react'
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router'
-import HomePage from './pages/HomePage'
-import AboutPage from './pages/AboutPage'
-import CoursesPage, { coursesLoader } from './pages/CoursesPage'
+import { createBrowserRouter, RouterProvider } from 'react-router'
+import HomePage from './pages/Home'
+import AboutPage from './pages/About'
+import CoursesPage, { courseDeleteAction, coursesLoader } from './pages/Courses'
 import MainLayout from './layouts/MainLayout'
 import ContactPage from './pages/help/ContactPage'
 import FAQPage from './pages/help/FAQPage'
 import HelpLayout from './layouts/HelpLayout'
-
-// const routes_1 = createRoutesFromElements(
-//   <Route>
-//     <Route path='/' element={<HomePage />} />
-//     <Route path='/home' element={<HomePage />} />
-//     <Route path='/about' element={<AboutPage />} />
-//     <Route path='/courses' element={<CoursesPage />} />
-//   </Route>
-// )
-
+import CourseDetail, { courseDetailsLoader } from './pages/CourseDetail'
+import CourseEdit from './pages/CourseEdit'
+import CourseCreate from './pages/CourseCreate'
+import { courseCreateAction } from './pages/CourseForm'
 const router = createBrowserRouter([
   {
     path: '/',
@@ -25,7 +18,26 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'home', element: <HomePage /> },
       { path: 'about', element: <AboutPage /> },
-      { path: 'courses', element: <CoursesPage />, loader: coursesLoader },
+      {
+        path: 'courses',
+        children: [
+          { index: true, element: <CoursesPage />, loader: coursesLoader },
+          {
+            id: 'course-details',
+            path: ':courseId',
+            loader: courseDetailsLoader,
+            children: [
+              { index: true, element: <CourseDetail /> },
+              { path: 'editCourse', element: <CourseEdit />, action: courseCreateAction },
+              { path: 'delete', action: courseDeleteAction }
+            ]
+          },
+          // { path: ':courseId', element: <CourseDetail />, loader: courseDetailsLoader },
+          // { path: ':courseId/editCourse', element: <CourseEdit /> },
+          { path: 'newCourse', element: <CourseCreate />, action: courseCreateAction }
+        ]
+      },
+
       {
         path: 'help',
         element: <HelpLayout />,
