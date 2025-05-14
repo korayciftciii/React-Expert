@@ -32,8 +32,6 @@ const router = createBrowserRouter([
               { path: 'delete', action: courseDeleteAction }
             ]
           },
-          // { path: ':courseId', element: <CourseDetail />, loader: courseDetailsLoader },
-          // { path: ':courseId/editCourse', element: <CourseEdit /> },
           { path: 'newCourse', element: <CourseCreate />, action: courseCreateAction }
         ]
       },
@@ -52,7 +50,6 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-
   return (
     <RouterProvider router={router} />
   )
