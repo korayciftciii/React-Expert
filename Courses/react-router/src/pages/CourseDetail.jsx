@@ -31,6 +31,9 @@ export default function CoursesPage() {
 }
 export async function courseDetailsLoader({ params }) {
     const { courseId } = params
-    var res = await fetch(`http://localhost:5000/courses/${courseId}`)
-    return res.json()
+    var response = await fetch(`http://localhost:5000/courses/${courseId}`)
+    if (!response.ok) {
+        throw new Response(`The course you search id of ${courseId} is not found`, { status: 404 });
+    }
+    return response.json()
 }

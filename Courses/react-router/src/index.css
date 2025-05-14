@@ -8,7 +8,8 @@
 :root {
     --primary: #deaa79;
     --secondary: #659287;
-
+    --error: #dc3545;
+    --text-dark: #333;
 }
 
 * {
@@ -171,4 +172,110 @@ h1 {
     margin-right: 10px;
     margin: 10px;
     cursor: pointer;
+}
+
+.error-message {
+    color: red;
+}
+
+#error-page a {
+    padding: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    background-color: var(--primary);
+    padding: 10px;
+    margin-right: 10px;
+    margin: 10px;
+}
+
+#error-page p {
+    padding: 10px;
+    font-weight: bold;
+}
+
+#course-form {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 20px;
+    background-color: var(--secondary);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.courseForm {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.courseForm label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: white;
+    display: block;
+}
+
+.courseForm input,
+.courseForm textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.courseForm input:focus,
+.courseForm textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.courseForm button {
+    padding: 10px 20px;
+    background-color: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+
+.courseForm button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.courseForm .error-message {
+    color: var(--error);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.courseValidation {
+    flex: 0.5;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    color: var(--error);
+    font-size: 0.95rem;
+}
+
+.validationList {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.validationError {
+    margin-bottom: 8px;
+    list-style-type: none;
+    border: 2px solid var(--primary);
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
 }
