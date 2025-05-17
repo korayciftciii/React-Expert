@@ -10,6 +10,8 @@ import ProductDetailsPage from './pages/ProductDetailsPage'
 import ErrorPage from './pages/Errors/ErrorPage'
 import ServerErrorPage from './pages/Errors/ServerErrorPage'
 import NotFoundPage from './pages/Errors/NotFoundPage'
+import { useEffect } from 'react'
+import requests from './Api/ApiClient'
 export const router = createBrowserRouter([
   {
     path: '/', element: <MainLayout />, children: [
@@ -36,6 +38,9 @@ export const router = createBrowserRouter([
   },
 ])
 function App() {
+  useEffect(() => {
+    requests.cart.get().then((cart) => console.log(cart)).catch((error) => console.log(error));
+  }, [])
   return (
     <>
       <RouterProvider router={router} />

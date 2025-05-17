@@ -1,74 +1,84 @@
 {
-  "products": [
-    {
-      "id": "1",
-      "title": "Mont 1",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
-      "image": "1.jpg",
-      "price": "2300",
-      "brand": "NorthPeak",
-      "stock": 7
-    },
-    {
-      "id": "2",
-      "title": "Mont 2",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
-      "image": "2.jpg",
-      "price": "2100",
-      "brand": "StormWear",
-      "stock": 3
-    },
-    {
-      "id": "3",
-      "title": "Mont 3",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
-      "image": "3.jpg",
-      "price": "2400",
-      "brand": "GlacierGear",
-      "stock": 9
-    },
-    {
-      "id": "4",
-      "title": "Mont 4",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
-      "image": "4.jpg",
-      "price": "1800",
-      "brand": "UrbanTrail",
-      "stock": 2
-    },
-    {
-      "id": "5",
-      "title": "Mont 5",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
-      "image": "5.jpg",
-      "price": "3200",
-      "brand": "AlpineEdge",
-      "stock": 6
-    },
-    {
-      "id": "6",
-      "title": "Mont 6",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
-      "image": "6.jpg",
-      "price": "3400",
-      "brand": "EverClimb",
-      "stock": 4
-    }
-  ],
-  "carts": [
-    {
-      "id": "da81ea9d-83bc-4e0d-8653-a06bc29e9ee1",
-      "customerId": "e30ac1c0-32f5-4e29-b811-7a9af68c2a84",
-      "cartItems": []
-    }
-  ],
-  "users": [
-    {
-      "id": "e10c4c6d-b804-4c1f-9dfb-9b3396a20243",
-      "username": "sadikturan",
-      "email": "info@sadikturan.com",
-      "password": "$2a$10$/xUsLl6c8kaMHL5RjAu8GeSCmnzVoiQUBzx9BpMad72ajCaJGNXvq"
-    }
-  ],
-  "orders": []
+    "products": [
+        {
+            "id": "1",
+            "title": "Mont 1",
+            "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
+            "image": "1.jpg",
+            "price": "2300",
+            "brand": "NorthPeak",
+            "stock": 7
+        },
+        {
+            "id": "2",
+            "title": "Mont 2",
+            "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
+            "image": "2.jpg",
+            "price": "2100",
+            "brand": "StormWear",
+            "stock": 3
+        },
+        {
+            "id": "3",
+            "title": "Mont 3",
+            "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
+            "image": "3.jpg",
+            "price": "2400",
+            "brand": "GlacierGear",
+            "stock": 9
+        },
+        {
+            "id": "4",
+            "title": "Mont 4",
+            "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
+            "image": "4.jpg",
+            "price": "1800",
+            "brand": "UrbanTrail",
+            "stock": 2
+        },
+        {
+            "id": "5",
+            "title": "Mont 5",
+            "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
+            "image": "5.jpg",
+            "price": "3200",
+            "brand": "AlpineEdge",
+            "stock": 6
+        },
+        {
+            "id": "6",
+            "title": "Mont 6",
+            "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste libero repudiandae quod omnis mollitia nam quo, quisquam quidem consectetur molestias ullam id aliquid, nobis, tempore repellendus iure. Vitae, vel fuga.",
+            "image": "6.jpg",
+            "price": "3400",
+            "brand": "EverClimb",
+            "stock": 4
+        }
+    ],
+    "carts": [
+        {
+            "id": "da81ea9d-83bc-4e0d-8653-a06bc29e9ee1",
+            "customerId": "e30ac1c0-32f5-4e29-b811-7a9af68c2a84",
+            "cartItems": []
+        },
+        {
+            "id": "2e3edc70-7920-47b6-bd02-f1668528dfc0",
+            "customerId": "14041a4e-c87e-4100-9a94-b2c6b1933907",
+            "cartItems": []
+        },
+        {
+            "id": "b4371754-3d14-4ec8-8136-ecdee56c1a75",
+            "customerId": "c473899b-2390-42cc-b897-af9ef44c42fa",
+            "cartItems": []
+        }
+    ],
+    "users": [
+        {
+            "id": "e10c4c6d-b804-4c1f-9dfb-9b3396a20243",
+            "username": "sadikturan",
+            "email": "info@sadikturan.com",
+            "password": "$2a$10$/xUsLl6c8kaMHL5RjAu8GeSCmnzVoiQUBzx9BpMad72ajCaJGNXvq"
+        }
+    ],
+    "orders": []
 }

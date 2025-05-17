@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { router } from "../App";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+axios.defaults.withCredentials = true;
 
 axios.interceptors.response.use((response) => {
     console.log("Success");
@@ -57,9 +58,15 @@ const errors = {
     getErrorStatus500: () => methods.get("errors/server-error").catch((error) => console.log(error)),
 
 };
+const cart = {
+    get: () => methods.get("carts"),
+    addItem: (productId, quantity = 1) => e - methods.post(`carts?productId=${productId}&quantity=${quantity}`, {}),
+    deleteItem: (productId, quantity = 1) => e - methods.delete(`carts?productId=${productId}&quantity=${quantity}`),
+}
 const requests = {
     products,
     errors,
+    cart,
 };
 
 export default requests;
