@@ -7,7 +7,10 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProductsPage from './pages/ProductsPage'
 import ProductDetailsPage from './pages/ProductDetailsPage'
-const router = createBrowserRouter([
+import ErrorPage from './pages/Errors/ErrorPage'
+import ServerErrorPage from './pages/Errors/ServerErrorPage'
+import NotFoundPage from './pages/Errors/NotFoundPage'
+export const router = createBrowserRouter([
   {
     path: '/', element: <MainLayout />, children: [
       { index: true, element: <HomePage /> },
@@ -20,7 +23,15 @@ const router = createBrowserRouter([
       },
       { path: 'cart', element: <CartPage /> },
       { path: 'login', element: <LoginPage /> },
-      { path: 'register', element: <RegisterPage /> }
+      { path: 'register', element: <RegisterPage /> },
+      {
+        path: 'error', children: [
+          { index: true, element: <ErrorPage /> },
+          { path: 'server-error', element: <ServerErrorPage /> },
+          { path: 'not-found', element: <NotFoundPage /> },
+        ]
+      },
+      { path: '*', element: <NotFoundPage /> }
     ]
   },
 ])

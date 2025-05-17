@@ -15,7 +15,7 @@ export default function ProductCard({ product }) {
             <CardOverflow>
                 <AspectRatio sx={{ minWidth: 200 }}>
                     <img
-                        src={`http://localhost:5000/images/${product.image}`}
+                        src={`${import.meta.env.VITE_API_URL}/images/${product.image}`}
                         loading="lazy"
                         alt={product.title}
                     />

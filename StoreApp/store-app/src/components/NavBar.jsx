@@ -16,8 +16,8 @@ export default function NavBar() {
                         <StoreIcon />
                     </IconButton>
                     {
-                        links.map((link) => (
-                            <Button component={NavLink} to={link.to} color='inherit'>
+                        links.map((link, index) => (
+                            <Button key={index} component={NavLink} to={link.to} color='inherit'>
                                 {link.title}
                             </Button>
                         ))
