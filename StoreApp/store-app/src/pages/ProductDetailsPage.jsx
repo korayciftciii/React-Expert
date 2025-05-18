@@ -10,334 +10,372 @@ import {
     Rating,
     Chip,
     Divider,
-    Paper,
-    Breadcrumbs,
-    Link,
-    Alert
+    IconButton,
+    Stack
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import requests from "../Api/ApiClient";
+import { UseCartContext } from "../Context/CartContext";
 
 export default function ProductDetailsPage() {
     const { productId } = useParams();
     const [item, setItem] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [quantity, setQuantity] = useState(1);
-    const apiUrl = import.meta.env.VITE_API_URL;
+    const [isWishlisted, setIsWishlisted] = useState(false);
+    const { cart, setCart } = UseCartContext();
+
+    const cartItem = cart?.cartItems.find(i => i.product.productId == item?.id);
+
     useEffect(() => {
         async function fetchProductDetails() {
             try {
                 setLoading(true);
-                const response = await requests.products.details(productId);
-                setItem(response);
+                const data = await requests.products.details(productId);
+                setItem(data);
             } catch (error) {
                 console.log(error);
             } finally {
                 setLoading(false);
             }
         }
+
         fetchProductDetails();
     }, [productId]);
 
-    const handleIncreaseQuantity = () => {
-        if (quantity < item.stock) {
-            setQuantity(quantity + 1);
-        }
+    const handleAddToCart = () => {
+        setLoading(true);
+        requests.cart.addItem(productId, quantity)
+            .then(cart => setCart(cart))
+            .catch((error) => console.log(error))
+            .finally(() => setLoading(false))
     };
 
-    const handleDecreaseQuantity = () => {
-        if (quantity > 1) {
-            setQuantity(quantity - 1);
-        }
-    };
+    const handleIncreaseQuantity = () => quantity < item.stock && setQuantity(quantity + 1);
+    const handleDecreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
+    const toggleWishlist = () => setIsWishlisted(!isWishlisted);
 
-    if (loading) {
-        return (
-            <Loading />
-        );
-    }
-
-    if (!item) {
-        return (
-            <Box sx={{ maxWidth: 1200, margin: 'auto', padding: 3 }}>
-                <Alert severity="error" sx={{ mt: 4 }}>
-                    <Typography variant="h6">Product not found</Typography>
-                    <Typography variant="body2">The product you are looking for doesn't exist or may have been removed.</Typography>
-                </Alert>
-            </Box>
-        );
-    }
+    if (loading) return <Loading />;
+    if (!item) return (
+        <Box sx={{ textAlign: 'center', p: 10 }}>
+            <Typography variant="h5">Ürün bulunamadı</Typography>
+        </Box>
+    );
 
     const isInStock = item.stock > 0;
+    const isLowStock = item.stock <= 5 && item.stock > 0;
 
     return (
-        <Box sx={{ maxWidth: 1200, margin: 'auto', padding: { xs: 2, md: 3 } }}>
-            {/* Breadcrumbs */}
-            <Breadcrumbs sx={{ mb: 3 }}>
-                <Link
-                    underline="hover"
-                    color="inherit"
-                    href="/"
-                    sx={{ display: 'flex', alignItems: 'center' }}
-                >
-                    <HomeIcon sx={{ mr: 0.5 }} fontSize="small" />
-                    Home
-                </Link>
-                <Link
-                    underline="hover"
-                    color="inherit"
-                    href="/products"
-                >
-                    Products
-                </Link>
-                <Typography color="text.primary">{item.title}</Typography>
-            </Breadcrumbs>
-
-            <Paper
-                elevation={3}
-                sx={{
-                    borderRadius: 2,
-                    overflow: 'hidden',
-                    background: 'linear-gradient(to bottom, #fcfcfc, #f7f7f7)',
-                }}
-            >
-                <Grid container spacing={0}>
-                    {/* Product Image */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                position: 'relative',
-                                height: { xs: 300, md: 500 },
-                                overflow: 'hidden',
-                                background: '#fff',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                borderRight: { xs: 'none', md: '1px solid #eee' },
-                                borderBottom: { xs: '1px solid #eee', md: 'none' },
-                            }}
-                        >
-                            {item.stock <= 5 && item.stock > 0 && (
-                                <Chip
-                                    label={`Last ${item.stock} items!`}
-                                    color="warning"
-                                    size="small"
-                                    sx={{
-                                        position: 'absolute',
-                                        top: 16,
-                                        right: 16,
-                                        fontWeight: 'bold',
-                                    }}
-                                />
-                            )}
-                            <img
-                                src={`http://localhost:5000/images/${item.image}`}
-                                alt={item.title}
-                                loading="lazy"
-                                style={{
-                                    maxWidth: '90%',
-                                    maxHeight: '90%',
-                                    objectFit: 'contain',
+        <Box sx={{
+            maxWidth: '1200px',
+            mx: 'auto',
+            px: { xs: 2, sm: 4 },
+            py: 4
+        }}>
+            <Grid container spacing={{ xs: 3, md: 6 }}>
+                {/* Product Image - Left Side */}
+                <Grid item xs={12} md={6}>
+                    <Box sx={{
+                        position: 'relative',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        bgcolor: 'background.paper',
+                        aspectRatio: '1/1',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        p: 3,
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                        border: '1px solid rgba(0,0,0,0.08)'
+                    }}>
+                        {isLowStock && (
+                            <Chip
+                                label={`Son ${item.stock} ürün`}
+                                color="error"
+                                size="small"
+                                sx={{
+                                    position: 'absolute',
+                                    top: 12,
+                                    right: 12,
+                                    fontWeight: 'bold',
+                                    backdropFilter: 'blur(4px)',
+                                    bgcolor: 'rgba(255,255,255,0.9)'
                                 }}
                             />
+                        )}
+
+                        <IconButton
+                            onClick={toggleWishlist}
+                            sx={{
+                                position: 'absolute',
+                                top: 12,
+                                left: 12,
+                                bgcolor: 'rgba(255,255,255,0.9)',
+                                '&:hover': { bgcolor: 'rgba(255,255,255,0.8)' }
+                            }}
+                        >
+                            <FavoriteBorderIcon
+                                sx={{
+                                    color: isWishlisted ? '#ff3d47' : 'rgba(0,0,0,0.5)',
+                                    fontSize: '1.5rem'
+                                }}
+                            />
+                        </IconButton>
+
+                        <Box component="img"
+                            src={`${import.meta.env.VITE_API_URL}/images/${item.image}`}
+                            alt={item.title}
+                            loading="lazy"
+                            sx={{
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                objectFit: 'contain',
+                                mixBlendMode: 'multiply',
+                                transition: 'transform 0.3s ease',
+                                '&:hover': {
+                                    transform: 'scale(1.05)'
+                                }
+                            }}
+                        />
+                    </Box>
+                </Grid>
+
+                {/* Product Info - Right Side */}
+                <Grid item xs={12} md={6}>
+                    <Box sx={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        pl: { md: 2 }
+                    }}>
+                        {/* Brand & Title */}
+                        <Chip
+                            label={item.brand}
+                            variant="outlined"
+                            size="small"
+                            sx={{
+                                mb: 2,
+                                alignSelf: 'flex-start',
+                                fontWeight: 600,
+                                color: 'primary.main',
+                                borderColor: 'primary.main'
+                            }}
+                        />
+
+                        <Typography variant="h1" sx={{
+                            fontWeight: 700,
+                            mb: 2,
+                            fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' },
+                            lineHeight: 1.2
+                        }}>
+                            {item.title}
+                        </Typography>
+
+                        {/* Rating */}
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            mb: 3,
+                            gap: 1
+                        }}>
+                            <Rating
+                                value={4.5}
+                                precision={0.5}
+                                readOnly
+                                sx={{
+                                    color: '#faaf00',
+                                    fontSize: '1.4rem'
+                                }}
+                            />
+                            <Typography variant="body2" color="text.secondary">
+                                (127 değerlendirme)
+                            </Typography>
                         </Box>
-                    </Grid>
 
-                    {/* Product Information */}
-                    <Grid item xs={12} md={6}>
-                        <Box sx={{ p: { xs: 2, md: 4 } }}>
-                            {/* Top Section */}
-                            <Box>
-                                <Chip
-                                    label={item.brand}
-                                    variant="outlined"
-                                    color="primary"
-                                    size="small"
-                                    sx={{ mb: 1 }}
-                                />
-                                <Typography
-                                    variant="h4"
-                                    component="h1"
-                                    sx={{
-                                        fontWeight: 700,
-                                        mb: 1,
-                                        fontSize: { xs: '1.5rem', md: '2.125rem' }
-                                    }}
-                                >
-                                    {item.title}
-                                </Typography>
-
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                    <Rating value={4.5} precision={0.5} readOnly size="small" />
-                                    <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                                        (127 reviews)
-                                    </Typography>
-                                </Box>
-
+                        {/* Price */}
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="h2" sx={{
+                                fontWeight: 700,
+                                color: 'primary.main',
+                                fontSize: { xs: '2rem', md: '2.5rem' },
+                                mb: 0.5
+                            }}>
+                                {currencyTRY.format(item.price)}
+                            </Typography>
+                            {item.originalPrice && (
                                 <Typography
                                     variant="body1"
-                                    color="text.secondary"
-                                    sx={{ mb: 3, lineHeight: 1.6 }}
+                                    color="text.disabled"
+                                    sx={{
+                                        textDecoration: 'line-through',
+                                        fontSize: '1.1rem'
+                                    }}
                                 >
-                                    {item.description}
+                                    {currencyTRY.format(item.originalPrice)}
                                 </Typography>
-                            </Box>
-
-                            <Divider sx={{ my: 3 }} />
-
-                            {/* Price and Stock Information */}
-                            <Box sx={{ mb: 3 }}>
-                                <Grid container spacing={2} alignItems="center">
-                                    <Grid item xs={7}>
-                                        <Typography
-                                            variant="h4"
-                                            color="primary.main"
-                                            sx={{
-                                                fontWeight: 700,
-                                                fontSize: { xs: '1.75rem', md: '2.25rem' }
-                                            }}
-                                        >
-                                            {currencyTRY.format(item.price)}
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                            VAT Included
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={5}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                            {isInStock ? (
-                                                <>
-                                                    <CheckCircleIcon color="success" sx={{ mr: 1 }} />
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="success.main"
-                                                        fontWeight={500}
-                                                    >
-                                                        In Stock
-                                                    </Typography>
-                                                </>
-                                            ) : (
-                                                <Typography
-                                                    variant="body1"
-                                                    color="error"
-                                                    fontWeight={500}
-                                                >
-                                                    Out of Stock
-                                                </Typography>
-                                            )}
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-                            </Box>
-
-                            {/* Quantity Selection and Add to Cart */}
-                            {isInStock && (
-                                <Box sx={{ mb: 4 }}>
-                                    <Typography variant="subtitle2" sx={{ mb: 1 }}>Quantity</Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={handleDecreaseQuantity}
-                                            disabled={quantity <= 1}
-                                            sx={{ minWidth: '40px', p: '5px' }}
-                                        >
-                                            -
-                                        </Button>
-                                        <Typography
-                                            variant="body1"
-                                            sx={{
-                                                mx: 2,
-                                                fontWeight: 600,
-                                                minWidth: '40px',
-                                                textAlign: 'center'
-                                            }}
-                                        >
-                                            {quantity}
-                                        </Typography>
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={handleIncreaseQuantity}
-                                            disabled={quantity >= item.stock}
-                                            sx={{ minWidth: '40px', p: '5px' }}
-                                        >
-                                            +
-                                        </Button>
-                                    </Box>
-                                </Box>
                             )}
+                            <Typography variant="caption" color="text.secondary">
+                                KDV Dahil
+                            </Typography>
+                        </Box>
 
-                            {/* Buttons */}
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} sm={8}>
-                                    <Button
-                                        variant="contained"
-                                        size="large"
-                                        fullWidth
-                                        startIcon={<ShoppingCartIcon />}
-                                        disabled={!isInStock}
+                        {/* Description */}
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                mb: 4,
+                                lineHeight: 1.8,
+                                color: 'text.secondary',
+                                fontSize: '1.05rem'
+                            }}
+                        >
+                            {item.description}
+                        </Typography>
+
+                        <Divider sx={{ my: 3, borderColor: 'rgba(0,0,0,0.08)' }} />
+
+                        {/* Quantity Selector */}
+                        {isInStock && (
+                            <Box sx={{ mb: 4 }}>
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{
+                                        mb: 2,
+                                        fontWeight: 600,
+                                        fontSize: '1rem'
+                                    }}
+                                >
+                                    Adet
+                                </Typography>
+                                <Stack
+                                    direction="row"
+                                    alignItems="center"
+                                    spacing={1.5}
+                                    sx={{
+                                        width: 'fit-content',
+                                        border: '1px solid rgba(0,0,0,0.1)',
+                                        borderRadius: '8px',
+                                        p: 0.5
+                                    }}
+                                >
+                                    <IconButton
+                                        onClick={handleDecreaseQuantity}
+                                        disabled={quantity <= 1}
                                         sx={{
-                                            py: 1.5,
-                                            fontWeight: 600,
-                                            boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
+                                            borderRadius: '6px',
                                             '&:hover': {
-                                                boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px'
+                                                bgcolor: 'rgba(0,0,0,0.05)'
                                             }
                                         }}
                                     >
-                                        Add to Cart
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={4}>
-                                    <Button
-                                        variant="outlined"
-                                        size="large"
-                                        fullWidth
-                                        startIcon={<FavoriteIcon />}
+                                        <RemoveIcon fontSize="small" />
+                                    </IconButton>
+                                    <Typography
+                                        variant="h6"
                                         sx={{
-                                            py: 1.5,
-                                            color: 'grey.700',
-                                            borderColor: 'grey.300',
+                                            px: 2,
+                                            minWidth: '20px',
+                                            textAlign: 'center'
                                         }}
                                     >
-                                        Add to Wishlist
-                                    </Button>
-                                </Grid>
-                            </Grid>
+                                        {quantity}
+                                    </Typography>
+                                    <IconButton
+                                        onClick={handleIncreaseQuantity}
+                                        disabled={quantity >= item.stock}
+                                        sx={{
+                                            borderRadius: '6px',
+                                            '&:hover': {
+                                                bgcolor: 'rgba(0,0,0,0.05)'
+                                            }
+                                        }}
+                                    >
+                                        <AddIcon fontSize="small" />
+                                    </IconButton>
+                                </Stack>
+                            </Box>
+                        )}
 
-                            <Divider sx={{ my: 3 }} />
+                        {/* Add to Cart Button */}
+                        <Box sx={{ mt: 'auto' }}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                size="large"
+                                startIcon={<ShoppingCartIcon />}
+                                disabled={!isInStock || loading}
+                                onClick={handleAddToCart}
+                                sx={{
+                                    py: 1.75,
+                                    borderRadius: '12px',
+                                    fontWeight: 600,
+                                    fontSize: '1rem',
+                                    textTransform: 'none',
+                                    letterSpacing: '0.5px',
+                                    boxShadow: 'none',
+                                    '&:hover': {
+                                        boxShadow: 'none',
+                                        bgcolor: 'primary.dark'
+                                    },
+                                    '&.Mui-disabled': {
+                                        bgcolor: 'rgba(0,0,0,0.12)',
+                                        color: 'rgba(0,0,0,0.26)'
+                                    }
+                                }}
+                            >
+                                {loading ? 'Ekleniyor...' : 'Sepete Ekle'}
+                            </Button>
 
-                            {/* Additional Information */}
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <LocalShippingIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                                        <Typography variant="body2" color="text.secondary">
-                                            Free Shipping (over $10)
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <AssignmentReturnIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                                        <Typography variant="body2" color="text.secondary">
-                                            14-Day Returns
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                            </Grid>
+                            {cartItem?.product.quantity > 0 && (
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        mt: 1.5,
+                                        textAlign: 'center',
+                                        color: 'primary.main',
+                                        fontWeight: 500
+                                    }}
+                                >
+                                    Sepetinizde {cartItem.product.quantity} adet var
+                                </Typography>
+                            )}
+
+                            {/* Shipping Info */}
+                            <Stack
+                                direction="row"
+                                spacing={1.5}
+                                sx={{
+                                    mt: 3,
+                                    alignItems: 'center',
+                                    bgcolor: 'rgba(0,0,0,0.02)',
+                                    p: 2,
+                                    borderRadius: '8px'
+                                }}
+                            >
+                                <LocalShippingIcon
+                                    sx={{
+                                        color: 'primary.main',
+                                        fontSize: '1.5rem'
+                                    }}
+                                />
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: 'text.secondary',
+                                        fontSize: '0.9rem'
+                                    }}
+                                >
+                                    <Box component="span" sx={{ fontWeight: 600 }}>Ücretsiz kargo</Box> • 3 iş günü içinde kargoda
+                                </Typography>
+                            </Stack>
                         </Box>
-                    </Grid>
+                    </Box>
                 </Grid>
-            </Paper>
-
-            {/* Additional tabs for product details can be added here */}
+            </Grid>
         </Box>
     );
 }

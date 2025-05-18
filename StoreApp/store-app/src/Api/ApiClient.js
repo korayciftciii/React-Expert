@@ -11,6 +11,9 @@ axios.interceptors.response.use((response) => {
 }, (error) => {
     const { data, status } = error.response;
     switch (status) {
+        case 200:
+            toast.success(data.message);
+            break;
         case 404:
             router.navigate("/error/not-found", {
                 state: { error: data }
@@ -42,9 +45,8 @@ const methods = {
     get: (url) => axios.get(url).then((response) => response.data),
     post: (url, body) => axios.post(url, body).then((response) => response.data),
     put: (url, body) => axios.put(url, body).then((response) => response.data),
-    delete: (url) => axios.delete(url).then((response) => response.data)
+    delete: (url) => axios.delete(url).then((response) => response.data),
 };
-
 
 const products = {
     list: () => methods.get('/products'),
@@ -60,8 +62,8 @@ const errors = {
 };
 const cart = {
     get: () => methods.get("carts"),
-    addItem: (productId, quantity = 1) => e - methods.post(`carts?productId=${productId}&quantity=${quantity}`, {}),
-    deleteItem: (productId, quantity = 1) => e - methods.delete(`carts?productId=${productId}&quantity=${quantity}`),
+    addItem: (productId, quantity = 1) => methods.post(`carts?productId=${productId}&quantity=${quantity}`, {}),
+    deleteItem: (productId, quantity = 1) => methods.delete(`carts?productId=${productId}&quantity=${quantity}`),
 }
 const requests = {
     products,

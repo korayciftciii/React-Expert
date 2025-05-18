@@ -12,6 +12,7 @@ import ServerErrorPage from './pages/Errors/ServerErrorPage'
 import NotFoundPage from './pages/Errors/NotFoundPage'
 import { useEffect } from 'react'
 import requests from './Api/ApiClient'
+import { UseCartContext } from './Context/CartContext'
 export const router = createBrowserRouter([
   {
     path: '/', element: <MainLayout />, children: [
@@ -38,8 +39,10 @@ export const router = createBrowserRouter([
   },
 ])
 function App() {
+  const { setCart } = UseCartContext();
+
   useEffect(() => {
-    requests.cart.get().then((cart) => console.log(cart)).catch((error) => console.log(error));
+    requests.cart.get().then((cart) => setCart(cart)).catch((error) => console.log(error));
   }, [])
   return (
     <>

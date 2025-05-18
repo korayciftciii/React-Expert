@@ -2,11 +2,14 @@ import StoreIcon from '@mui/icons-material/Store';
 import { AppBar, Badge, Box, Button, IconButton, Toolbar } from '@mui/material';
 import { NavLink } from 'react-router';
 import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
+import { UseCartContext } from '../Context/CartContext';
 const links = [
     { title: "Home", to: '/' },
     { title: "Products", to: '/products' },
 ]
 export default function NavBar() {
+    const { cart } = UseCartContext();
+    const itemCount = cart?.cartItems.reduce((total, item) => total + item.product.quantity, 0);
     return (
 
         <AppBar sx={{ backgroundColor: 'primary.light' }} position='static'>
@@ -26,7 +29,7 @@ export default function NavBar() {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
 
                     <IconButton color="inherit" component={NavLink} to='cart' size='large' edge="start">
-                        <Badge badgeContent="3" color='primary'>
+                        <Badge badgeContent={itemCount} color='primary'>
                             <LocalGroceryStoreIcon />
                         </Badge>
                     </IconButton>
