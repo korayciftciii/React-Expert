@@ -1,6 +1,11 @@
+import Counter from "./Counter/Counter";
+
 export default function HomePage() {
     return (
 
-        <h1>home</h1>
+        <>
+            <Counter />
+        </>
+
     )
 }

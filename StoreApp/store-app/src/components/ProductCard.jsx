@@ -8,20 +8,13 @@ import Link from '@mui/joy/Link';
 import Typography from '@mui/joy/Typography';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import { currencyTRY } from '../utils/formats';
-import requests from '../Api/ApiClient';
-import { useState } from 'react';
-import { UseCartContext } from '../Context/CartContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItemToCart } from '../pages/cart/cartSlice';
 
 export default function ProductCard({ product }) {
-    const [loading, setLoading] = useState(false);
-    const { setCart } = UseCartContext();
-    function handleAddToCart(productId) {
-        setLoading(true);
-        requests.cart.addItem(productId)
-            .then(cart => setCart(cart))
-            .catch((error) => console.log(error))
-            .finally(() => setLoading(false))
-    }
+    const { status } = useSelector((state) => state.cart);
+    const dispatch = useDispatch();
+
     return (
         <Card sx={{ width: 320, maxWidth: '100%', boxShadow: 'lg' }}>
             <CardOverflow>
@@ -63,10 +56,10 @@ export default function ProductCard({ product }) {
                 </Typography>
             </CardContent>
             <CardOverflow>
-                <Button loading={loading} onClick={() => handleAddToCart(product.id)} variant="solid" color="primary" size="lg">
+                <Button loading={status === "pendingAddItem" + product.id ? true : false} onClick={() => dispatch(addItemToCart({ productId: product.id }))} variant="solid" color="primary" size="lg">
                     Add to cart
                 </Button>
             </CardOverflow>
-        </Card>
+        </Card >
     );
 }

@@ -18,48 +18,35 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import requests from "../Api/ApiClient";
-import { UseCartContext } from "../Context/CartContext";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart } from "./cart/cartSlice";
+import { fetchProductById, selectProductById } from "./catalog/catalogSlice";
 
 export default function ProductDetailsPage() {
     const { productId } = useParams();
-    const [item, setItem] = useState(null);
-    const [loading, setLoading] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [isWishlisted, setIsWishlisted] = useState(false);
-    const { cart, setCart } = UseCartContext();
+    const { cart, status } = useSelector(state => state.cart);
+    const { status: loading } = useSelector(state => state.catalog);
+    const dispatch = useDispatch();
+    const item = useSelector((state) => selectProductById(state, productId));
+
+
 
     const cartItem = cart?.cartItems.find(i => i.product.productId == item?.id);
 
     useEffect(() => {
-        async function fetchProductDetails() {
-            try {
-                setLoading(true);
-                const data = await requests.products.details(productId);
-                setItem(data);
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
+        if (!item && productId) {
+            dispatch(fetchProductById(productId));
         }
-
-        fetchProductDetails();
     }, [productId]);
 
-    const handleAddToCart = () => {
-        setLoading(true);
-        requests.cart.addItem(productId, quantity)
-            .then(cart => setCart(cart))
-            .catch((error) => console.log(error))
-            .finally(() => setLoading(false))
-    };
 
     const handleIncreaseQuantity = () => quantity < item.stock && setQuantity(quantity + 1);
     const handleDecreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
     const toggleWishlist = () => setIsWishlisted(!isWishlisted);
 
-    if (loading) return <Loading />;
+    if (loading === "pendingFetchProductById") return <Loading />;
     if (!item) return (
         <Box sx={{ textAlign: 'center', p: 10 }}>
             <Typography variant="h5">Ürün bulunamadı</Typography>
@@ -307,8 +294,8 @@ export default function ProductDetailsPage() {
                                 variant="contained"
                                 size="large"
                                 startIcon={<ShoppingCartIcon />}
-                                disabled={!isInStock || loading}
-                                onClick={handleAddToCart}
+                                disabled={!isInStock || status === "pendingAddItem"}
+                                onClick={() => dispatch(addItemToCart({ productId: productId, quantity: quantity }))}
                                 sx={{
                                     py: 1.75,
                                     borderRadius: '12px',
@@ -327,7 +314,7 @@ export default function ProductDetailsPage() {
                                     }
                                 }}
                             >
-                                {loading ? 'Ekleniyor...' : 'Sepete Ekle'}
+                                {status === "pendingAddItem" + productId ? "Adding..." : "Add To Cart"}
                             </Button>
 
                             {cartItem?.product.quantity > 0 && (

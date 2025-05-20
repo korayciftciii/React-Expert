@@ -2,34 +2,20 @@ import { Delete } from "@mui/icons-material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { Button, CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import { currencyTRY } from "../utils/formats";
-import { UseCartContext } from "../Context/CartContext";
+import { currencyTRY } from "../../utils/formats";
+import { UseCartContext } from "../../Context/CartContext";
 import { useState } from "react";
-import requests from "../Api/ApiClient";
+import requests from "../../Api/ApiClient";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart, deleteItemFromCart, setCart } from "./cartSlice";
 
 export default function CartPage() {
-    const { cart, setCart } = UseCartContext();
-    const [status, setStatus] = useState({ loading: false, id: "" });
+    const { cart, status } = useSelector((state) => state.cart);
+    const dispatch = useDispatch();
     const subTotal = cart?.cartItems.reduce((toplam, item) => toplam + (item.product.quantity * item.product.price), 0);
     const tax = subTotal * 0.2;
     const total = subTotal + tax;
-    function handleAddItem(productId, id) {
-        setStatus({ loading: true, id: id });
-        requests.cart
-            .addItem(productId)
-            .then((cart) => setCart(cart))
-            .catch((error) => console.log(error))
-            .finally(() => setStatus({ loading: false, id: "" }));
-    }
 
-    function handleRemoveItem(productId, id, quantity = 1) {
-        setStatus({ loading: true, id: id });
-        requests.cart
-            .deleteItem(productId, quantity)
-            .then((cart) => setCart(cart))
-            .catch((error) => console.log(error))
-            .finally(() => setStatus({ loading: false, id: "" }));
-    }
     if (!cart || cart.cartItems.lenght === 0) {
         return <Typography>Your Cart is Empty</Typography>
     }
@@ -49,7 +35,7 @@ export default function CartPage() {
                 <TableBody>
                     {
                         cart.cartItems?.map(item => (
-                            <TableRow key={item.product.id}>
+                            <TableRow key={item.product.productId}>
                                 <TableCell>
                                     <img
                                         src={`${import.meta.env.VITE_API_URL}/images/${item.product.image}`}
@@ -65,22 +51,22 @@ export default function CartPage() {
                                     {currencyTRY.format(item.product.price)}
                                 </TableCell>
                                 <TableCell>
-                                    <Button onClick={() => handleAddItem(item.product.productId, "add" + item.product.productId)}>
+                                    <Button onClick={() => dispatch(addItemToCart({ productId: item.product.productId }))}>
                                         {
-                                            status.loading && status.id === "add" + item.product.productId ? (<CircularProgress size={'20px'} />) : (<AddCircleOutlineIcon />)
+                                            status === "pendingAddItem" + item.product.productId ? (<CircularProgress size={'20px'} />) : (<AddCircleOutlineIcon />)
                                         }
                                     </Button>
                                     {item.product.quantity}
-                                    <Button onClick={() => handleRemoveItem(item.product.productId, "remove" + item.product.productId)}>
+                                    <Button onClick={() => dispatch(deleteItemFromCart({ productId: item.product.productId, quantity: 1, key: "single" }))}>
                                         {
-                                            status.loading && status.id === "remove" + item.product.productId ? (<CircularProgress size={'20px'} />) : (<RemoveCircleOutlineIcon />)
+                                            status === "pendingDeleteItem" + item.product.productId + "single" ? (<CircularProgress size={'20px'} />) : (<RemoveCircleOutlineIcon />)
                                         }
                                     </Button>
                                 </TableCell>
                                 <TableCell>{currencyTRY.format(item.product.price * item.product.quantity)}</TableCell>
                                 <TableCell>
-                                    <Button color="error" onClick={() => handleRemoveItem(item.product.productId, "remove_all" + item.product.productId, item.product.quantity)}>
-                                        {status.loading && status.id === "remove_all" + item.product.productId ? (<CircularProgress size={'20px'} />) : (<Delete />)}
+                                    <Button color="error" onClick={() => dispatch(deleteItemFromCart({ productId: item.product.productId, quantity: item.product.quantity, key: "all" }))}>
+                                        {status === "pendingDeleteItem" + item.product.productId + "all" ? (<CircularProgress size={'20px'} />) : (<Delete />)}
                                     </Button>
                                 </TableCell>
                             </TableRow>

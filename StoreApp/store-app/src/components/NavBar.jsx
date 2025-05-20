@@ -3,12 +3,13 @@ import { AppBar, Badge, Box, Button, IconButton, Toolbar } from '@mui/material';
 import { NavLink } from 'react-router';
 import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
 import { UseCartContext } from '../Context/CartContext';
+import { useSelector } from 'react-redux';
 const links = [
     { title: "Home", to: '/' },
     { title: "Products", to: '/products' },
 ]
 export default function NavBar() {
-    const { cart } = UseCartContext();
+    const { cart } = useSelector((state) => state.cart);
     const itemCount = cart?.cartItems.reduce((total, item) => total + item.product.quantity, 0);
     return (
 
