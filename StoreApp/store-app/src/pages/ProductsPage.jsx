@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductList from "../components/ProductList";
 import Loading from "../components/Loading";
-import requests from "../Api/ApiClient";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, selectAllProducts } from "./catalog/catalogSlice";
 

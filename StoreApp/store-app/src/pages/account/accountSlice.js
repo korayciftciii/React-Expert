@@ -1,17 +1,16 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { router } from "../../App";
-import requests from "../../Api/ApiClient";
-
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { router } from "../../hooks/router";
+import requests from "../../api/apiClient";
 const initialState = {
     user: null,
-    status: "idle"
-}
+    status: "idle",
+};
 
-export const login = createAsyncThunk(
+export const loginUser = createAsyncThunk(
     "account/login",
     async (data, thunkAPI) => {
         try {
-            const user = await requests.account.login(data)
+            const user = await requests.account.login(data);
             localStorage.setItem("user", JSON.stringify(user));
             router.navigate("/");
             return user;
@@ -22,40 +21,34 @@ export const login = createAsyncThunk(
 );
 
 export const registerUser = createAsyncThunk(
-    "account/registerUser",
+    "account/register",
     async (data, thunkAPI) => {
         try {
-            await requests.account.login(data)
+            await requests.account.register(data);
             router.navigate("/login");
         } catch (error) {
+            console.log(error);
             return thunkAPI.rejectWithValue({ message });
         }
     }
 );
+
 export const getUser = createAsyncThunk(
-    'account/getUser',
-    async (_, { dispatch, rejectWithValue }) => {
+    "account/getUser",
+    async (_, thunkAPI) => {
+        thunkAPI.dispatch(setUser(JSON.parse(localStorage.getItem("user"))));
         try {
-            const storedUser = localStorage.getItem('user');
-
-            if (storedUser) {
-                try {
-                    dispatch(setUser(JSON.parse(storedUser)));
-                } catch (err) {
-                    console.error("Invalid user data in localStorage:", err);
-                    localStorage.removeItem("user");
-                    dispatch(logout());
-                }
-            }
-
             const user = await requests.account.getUser();
-            dispatch(setUser(user));
             localStorage.setItem("user", JSON.stringify(user));
-        } catch (err) {
-            console.error("Error initializing user:", err);
-            dispatch(logout());
-            return rejectWithValue(err.message);
+            return user;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ message });
         }
+    },
+    {
+        condition: () => {
+            if (!localStorage.getItem("user")) return false;
+        },
     }
 );
 
@@ -73,40 +66,37 @@ export const accountSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(login.pending, (state) => {
+        builder.addCase(loginUser.pending, (state) => {
             state.status = "pending";
         });
-
-        builder.addCase(login.fulfilled, (state, action) => {
+        builder.addCase(loginUser.fulfilled, (state, action) => {
             state.user = action.payload;
             state.status = "idle";
         });
-        builder.addCase(login.rejected, (state) => {
+        builder.addCase(loginUser.rejected, (state) => {
             state.status = "idle";
         });
-
 
         builder.addCase(registerUser.pending, (state) => {
             state.status = "pending";
         });
-
-        builder.addCase(registerUser.fulfilled, (state) => {
+        builder.addCase(registerUser.fulfilled, (state, action) => {
             state.status = "idle";
         });
         builder.addCase(registerUser.rejected, (state) => {
             state.status = "idle";
         });
 
-
         builder.addCase(getUser.fulfilled, (state, action) => {
             state.user = action.payload;
         });
+
         builder.addCase(getUser.rejected, (state) => {
             state.user = null;
             localStorage.removeItem("user");
             router.navigate("/login");
         });
-    }
+    },
 });
 
 export const { setUser, logout } = accountSlice.actions;

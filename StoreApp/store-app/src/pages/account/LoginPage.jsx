@@ -1,11 +1,8 @@
 import { Avatar, Box, Button, Container, Paper, TextField, Typography } from "@mui/material"
 import { LockOutlined } from "@mui/icons-material"
-import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router";
-import requests from "../../Api/ApiClient";
 import { useDispatch, useSelector } from "react-redux";
-import { login, setUser } from "./accountSlice";
+import { loginUser } from "./accountSlice";
 export default function LoginPage() {
     const { status } = useSelector((state) => state.account);
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -15,9 +12,8 @@ export default function LoginPage() {
         }
     });
     const dispacth = useDispatch();
-    const navigation = useNavigate();
     function handleForm(data) {
-        dispacth(login(data));
+        dispacth(loginUser(data));
     }
     return (
         <Container maxWidth={"xs"} >

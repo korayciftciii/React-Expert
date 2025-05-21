@@ -1,80 +1,40 @@
-import { createBrowserRouter } from 'react-router'
-import { RouterProvider } from 'react-router'
-import HomePage from './pages/HomePage'
-import CartPage from './pages/cart/CartPage'
-import LoginPage from './pages/account/LoginPage'
-import RegisterPage from './pages/account/RegisterPage'
-import ProductsPage from './pages/ProductsPage'
-import ProductDetailsPage from './pages/ProductDetailsPage'
-import ErrorPage from './pages/Errors/ErrorPage'
-import ServerErrorPage from './pages/Errors/ServerErrorPage'
-import NotFoundPage from './pages/Errors/NotFoundPage'
-import { useEffect } from 'react'
-import requests from './Api/ApiClient'
-import { useDispatch } from 'react-redux'
-import { setCart } from './pages/cart/cartSlice'
-import { logout, setUser } from './pages/account/accountSlice'
-import MainLayout from './layouts/MainLayout'
-export const router = createBrowserRouter([
-  {
-    path: '/', element: <MainLayout />, children: [
-      { index: true, element: <HomePage /> },
-      { path: 'home', element: <HomePage /> },
-      {
-        path: 'products', children: [
-          { index: true, element: <ProductsPage /> },
-          { path: ':productId', element: <ProductDetailsPage /> },
-        ]
-      },
-      { path: 'cart', element: <CartPage /> },
-      { path: 'login', element: <LoginPage /> },
-      { path: 'register', element: <RegisterPage /> },
-      {
-        path: 'error', children: [
-          { index: true, element: <ErrorPage /> },
-          { path: 'server-error', element: <ServerErrorPage /> },
-          { path: 'not-found', element: <NotFoundPage /> },
-        ]
-      },
-      { path: '*', element: <NotFoundPage /> }
-    ]
-  },
-])
+import { RouterProvider } from 'react-router'; // Make sure it's react-router-dom
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { getCart } from './pages/cart/cartSlice';
+import { getUser } from './pages/account/accountSlice';
+import Loading from './components/Loading';
+import { router } from "./hooks/router";
+
 function App() {
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true); // Start with loading as true
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    useEffect(() => {
+        // Define the initialization function
+        const initApp = async () => {
+            try {
+                // Dispatch actions sequentially
+                await dispatch(getUser()).unwrap();
+                await dispatch(getCart()).unwrap();
+                setLoading(false);
+            } catch (error) {
+                console.log("Initialization error:", error);
+                setLoading(false); // Still set loading to false even on error
+            }
+        };
 
-    if (storedUser) {
-      try {
-        dispatch(setUser(JSON.parse(storedUser)));
-      } catch (error) {
-        console.error("Invalid user data in localStorage:", error);
-        localStorage.removeItem("user");
-        dispatch(logout());
-      }
+        // Call the function
+        initApp();
+    }, [dispatch]); // Add dispatch as a dependency
+
+    // Show loading component if we're still loading
+    if (loading) {
+        return <Loading />;
     }
 
-    requests.account
-      .getUser()
-      .then((user) => {
-        dispatch(setUser(user)); // Eksik olan dispatch ekledim
-        localStorage.setItem("user", JSON.stringify(user));
-      })
-      .catch((error) => {
-        console.error("Error fetching user from API:", error);
-        dispatch(logout());
-      });
-
-    requests.cart
-      .get()
-      .then((cart) => dispatch(setCart(cart)))
-      .catch((error) => console.error("Error fetching cart:", error));
-  }, []);
-
-  return <RouterProvider router={router} />;
+    // Render the application once loaded
+    return <RouterProvider router={router} />;
 }
 
-
-export default App
+export default App;

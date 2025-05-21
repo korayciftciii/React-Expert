@@ -55,40 +55,13 @@
             "stock": 4
         }
     ],
-    "carts": [
-        {
-            "id": "da81ea9d-83bc-4e0d-8653-a06bc29e9ee1",
-            "customerId": "e30ac1c0-32f5-4e29-b811-7a9af68c2a84",
-            "cartItems": []
-        },
-        {
-            "id": "2e3edc70-7920-47b6-bd02-f1668528dfc0",
-            "customerId": "14041a4e-c87e-4100-9a94-b2c6b1933907",
-            "cartItems": []
-        },
-        {
-            "id": "b4371754-3d14-4ec8-8136-ecdee56c1a75",
-            "customerId": "c473899b-2390-42cc-b897-af9ef44c42fa",
-            "cartItems": [
-                {
-                    "id": "e3470ade-ccaf-4ab8-97ec-767fc1e73e0c",
-                    "productId": "1",
-                    "quantity": 1
-                }
-            ]
-        },
-        {
-            "id": "5ba4a6e8-a329-460f-9a44-4c8fcb9e0317",
-            "customerId": "cf165e6e-1f63-40fb-a61e-38a2fd920261",
-            "cartItems": []
-        }
-    ],
+    "carts": [],
     "users": [
         {
-            "id": "2228727f-8da0-4504-bd0f-cba02b7dee31",
+            "id": "5953defb-fe15-487d-a91b-459a8a5f8e5c",
             "username": "korayciftci",
             "email": "korayciftciii60@gmail.com",
-            "password": "$2a$10$zvGJv4vFDnzj8YB7CNWWt.DFxQB9Yipz8ySbd5appNMWbUKCNS0im"
+            "password": "$2a$10$Bi3XhTY2FpqwaNR74QtQgeQzaEp8WMrTZ.l6tih.5lb0f8wym.D1G"
         }
     ],
     "orders": []
