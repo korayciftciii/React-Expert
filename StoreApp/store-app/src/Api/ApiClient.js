@@ -1,12 +1,19 @@
 import axios from "axios"
 import { toast } from "react-toastify";
 import { router } from "../App";
+import { store } from "../Store/Store";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
+axios.interceptors.request.use((request) => {
+    const token = store.getState().account.user?.token;
+    if (token)
+        request.headers.Authorization = `Bearer ${token}`;
+    return request;
+
+});
 
 axios.interceptors.response.use((response) => {
-    console.log("Success");
     return response;
 }, (error) => {
     const { data, status } = error.response;
@@ -58,7 +65,11 @@ const errors = {
     getErrorStatus403: () => methods.get("errors/validation-error"),
     getErrorStatus404: () => methods.get("errors/not-found").catch((error) => console.log(error)),
     getErrorStatus500: () => methods.get("errors/server-error").catch((error) => console.log(error)),
-
+};
+const account = {
+    login: (formData) => methods.post("users/login", formData).catch((error) => console.log(error)),
+    register: (formData) => methods.post("users/register", formData).catch((error) => console.log(error)),
+    getUser: () => methods.get("users/getUser").catch((error) => console.log(error)),
 };
 const cart = {
     get: () => methods.get("carts"),
@@ -68,6 +79,7 @@ const cart = {
 const requests = {
     products,
     errors,
+    account,
     cart,
 };
 
